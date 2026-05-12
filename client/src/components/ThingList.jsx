@@ -33,7 +33,7 @@ const ThingList = observer(() => {
     }
 
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-2 sm:mt-4">
             {thing.things.map(t =>
                 <ThingItem key={t.id} thing={t} onDeleted={handleDeleted} />
             )}
