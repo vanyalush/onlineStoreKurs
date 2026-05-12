@@ -26,28 +26,47 @@ class BasketController {
     }
 
     async addToBasket(req, res, next) {
-        try {
-            const userId = req.user.id;
-            const { thingId } = req.body;
+    try {
+        const userId = req.user.id;
+        const { thingId } = req.body;
 
-            let basket = await Basket.findOne({ where: { userId } });
-            if (!basket) {
-                basket = await Basket.create({ userId });
-            }
-
-            const existing = await BasketThing.findOne({
-                where: { basketId: basket.id, thingId }
-            });
-            if (existing) {
-                return res.json(existing);
-            }
-
-            const item = await BasketThing.create({ basketId: basket.id, thingId });
-            return res.json(item);
-        } catch (err) {
-            next(ApiError.badRequest(err.message));
+        let basket = await Basket.findOne({ where: { userId } });
+        if (!basket) {
+            basket = await Basket.create({ userId });
         }
+
+        const existing = await BasketThing.findOne({
+            where: { basketId: basket.id, thingId },
+            include: [{
+                model: Thing,
+                include: [
+                    { model: Brand, attributes: ['id', 'name'] },
+                    { model: Type, attributes: ['id', 'name'] }
+                ]
+            }]
+        });
+        if (existing) {
+            return res.json(existing);
+        }
+
+        const item = await BasketThing.create({ basketId: basket.id, thingId });
+
+        const fullItem = await BasketThing.findOne({
+            where: { id: item.id },
+            include: [{
+                model: Thing,
+                include: [
+                    { model: Brand, attributes: ['id', 'name'] },
+                    { model: Type, attributes: ['id', 'name'] }
+                ]
+            }]
+        });
+
+        return res.json(fullItem);
+    } catch (err) {
+        next(ApiError.badRequest(err.message));
     }
+}
 
     async removeFromBasket(req, res, next) {
         try {
