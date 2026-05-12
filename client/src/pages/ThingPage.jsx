@@ -26,20 +26,14 @@ const ThingPage = observer(() => {
     }, [id]);
 
     const handleAddToBasket = async () => {
-        if (!user.isAuth) {
-            navigate(LOGIN_ROUTE);
-            return;
-        }
+        if (!user.isAuth) { navigate(LOGIN_ROUTE); return; }
         setAddingToCart(true);
         try {
             await addToBasket(thing.id);
             setAdded(true);
             setTimeout(() => setAdded(false), 2500);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setAddingToCart(false);
-        }
+        } catch (e) { console.error(e); }
+        finally { setAddingToCart(false); }
     };
 
     if (loading) {
@@ -56,22 +50,20 @@ const ThingPage = observer(() => {
     if (!thing) return null;
 
     return (
-        <div className="w-9/12 mx-auto mt-10 mb-16">
-            <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+        <div className="w-[92%] mx-auto mt-6 sm:mt-10 mb-16">
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 text-sm text-gray-400 mb-6 flex-wrap">
                 <button onClick={() => navigate(SHOP_ROUTE)} className="hover:text-black transition-colors">Магазин</button>
                 <span>›</span>
-                {thing.type?.name && (
-                    <>
-                        <span className="text-gray-400">{thing.type.name}</span>
-                        <span>›</span>
-                    </>
-                )}
+                {thing.type?.name && (<><span>{thing.type.name}</span><span>›</span></>)}
                 <span className="text-black font-medium">{thing.name}</span>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-10">
-                <div className="flex-shrink-0 md:w-5/12">
-                    <div className="bg-[#DADADA] rounded-2xl flex items-center justify-center overflow-hidden" style={{aspectRatio: '3/4'}}>
+            <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+                {/* Image */}
+                <div className="md:w-5/12 flex-shrink-0">
+                    <div className="bg-[#DADADA] rounded-2xl flex items-center justify-center overflow-hidden"
+                        style={{aspectRatio: '3/4', maxHeight: '520px'}}>
                         <img
                             src={`${BASE_URL}/${thing.img}`}
                             alt={thing.name}
@@ -80,8 +72,9 @@ const ThingPage = observer(() => {
                     </div>
                 </div>
 
-                <div className="flex flex-col flex-1 py-2">
-                    <div className="flex items-center gap-3 mb-1">
+                {/* Details */}
+                <div className="flex flex-col flex-1 py-1">
+                    <div className="flex items-center gap-3 mb-1 flex-wrap">
                         <span className="text-xs uppercase tracking-widest text-gray-400 font-medium">
                             {thing.brand?.name || ''}
                         </span>
@@ -92,10 +85,10 @@ const ThingPage = observer(() => {
                         )}
                     </div>
 
-                    <h1 className="text-3xl font-bold leading-tight mb-4">{thing.name}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold leading-tight mb-4">{thing.name}</h1>
 
                     <div className="flex items-baseline gap-3 mb-5">
-                        <span className="text-4xl font-black">{thing.price?.toLocaleString()} ₽</span>
+                        <span className="text-3xl sm:text-4xl font-black">{thing.price?.toLocaleString()} ₽</span>
                     </div>
 
                     {thing.size && (
@@ -103,9 +96,7 @@ const ThingPage = observer(() => {
                             <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">Размер</p>
                             <div className="flex gap-2 flex-wrap">
                                 {thing.size.split(',').map(s => s.trim()).filter(Boolean).map(s => (
-                                    <span key={s} className="px-4 py-1.5 border border-black rounded-lg text-sm font-medium">
-                                        {s}
-                                    </span>
+                                    <span key={s} className="px-3 sm:px-4 py-1.5 border border-black rounded-lg text-sm font-medium">{s}</span>
                                 ))}
                             </div>
                         </div>
@@ -132,13 +123,13 @@ const ThingPage = observer(() => {
                         </div>
                     )}
 
-                    <div className="flex gap-3 mt-auto pt-4">
+                    {/* CTA buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 mt-auto pt-4">
                         <button
                             onClick={handleAddToBasket}
                             disabled={addingToCart}
                             className={`flex-1 h-12 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                                added
-                                    ? 'bg-green-500 text-white scale-[0.98]'
+                                added ? 'bg-green-500 text-white scale-[0.98]'
                                     : 'bg-black text-white hover:scale-[1.02] active:scale-[0.98]'
                             } disabled:opacity-60`}
                         >
@@ -147,7 +138,7 @@ const ThingPage = observer(() => {
                         {user.isAuth && (
                             <button
                                 onClick={() => navigate(BASKET_ROUTE)}
-                                className="h-12 px-5 rounded-xl border border-black text-sm font-medium hover:bg-black hover:text-white transition-all duration-200"
+                                className="h-12 px-5 rounded-xl border border-black text-sm font-medium hover:bg-black hover:text-white transition-all duration-200 sm:w-auto w-full"
                             >
                                 Перейти в корзину
                             </button>
