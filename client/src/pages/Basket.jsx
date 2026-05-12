@@ -11,8 +11,13 @@ const Basket = observer(() => {
     const BASE_URL = import.meta.env.VITE_APP_URL || 'http://localhost:5001';
 
     useEffect(() => {
-        fetchBasket().then(data => basket.setItems(data));
-    }, [basket]);
+    fetchBasket()
+        .then(data => {
+            const items = Array.isArray(data) ? data : (data.rows || []);
+            basket.setItems(items);
+        })
+        .finally(() => setLoading(false));
+}, [basket]);
 
     const remove = (id) => {
         removeFromBasket(id).then(() => {
@@ -47,7 +52,9 @@ const Basket = observer(() => {
             <div className="flex flex-col lg:flex-row gap-6">
                 {/* Items list */}
                 <div className="flex-1 flex flex-col gap-3">
-                    {basket.items.map(item => (
+                    {basket.items
+                        .filter(item => item.thing)
+                        .map(item => (
                         <div key={item.id} className="bg-white rounded-2xl p-3 sm:p-4 shadow-sm flex items-center gap-3 sm:gap-4">
                             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#DADADA] rounded-xl flex-shrink-0 overflow-hidden">
                                 <img
